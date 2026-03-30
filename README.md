@@ -16,7 +16,7 @@ By combining machine learning with intuitive design, MediPredict AI enables user
 * Probability-based ranking of conditions.
 * Severity analysis (Low → Critical).
 * Precautions and disease descriptions.
-* AI-powered assistant for real-time health queries.
+* Integration of an AI assistant (LLM) for real-time medical guidance.
 * Clean and interactive UI.
   
 ---
@@ -35,10 +35,11 @@ By combining machine learning with intuitive design, MediPredict AI enables user
 
 ##  How It Works
 
-1. User selects symptoms
-2. Symptoms are converted into a feature vector
-3. ML model predicts possible diseases
-4. Returns results with probabilities, severity, and precautions
+1. User selects symptoms.
+2. Symptoms are converted into a feature vector.
+3. ML model predicts possible diseases.
+4. Returns results with probabilities, severity, and precautions.
+5. Users can further interact with an AI assistant for additional guidance and explanations.
 
 ---
 
@@ -62,6 +63,12 @@ By combining machine learning with intuitive design, MediPredict AI enables user
 ---
 
 ##  Setup Instructions
+
+### Environment Variables
+Create a `.env` file in the `backend/` directory (or rename `.env.example`) and add:
+```bash
+GROQ_API_KEY=your_api_key_here
+```
 
 ### Backend
 
