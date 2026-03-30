@@ -6,13 +6,13 @@ MediPredict AI is an AI-powered and medical assistance platform that analyzes sy
 
 ##  Preview
 
-!(assets/main.png)
+![UI](assets/main.png)
 
-!(assets/symptoms.png)
+![UI](assets/symptoms.png)
 
-!(assets/results.png)
+![UI](assets/results.png)
 
-!(assets/aichatbot.png)
+![UI](assets/aichatbot.png)
 
 ---
 
