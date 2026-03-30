@@ -1,6 +1,6 @@
 # MediPredictAI 
 
-MediPredictAI is an AI-powered and medical assistance platform that analyzes symptoms and provides possible conditions along with severity levels and medical suggestions.
+MediPredictAI is an AI-powered disease prediction system that analyzes symptoms and provides possible conditions along with severity levels and medical suggestions.
 
 The system uses a trained machine learning model to evaluate symptom patterns and predict possible diseases along with probability scores, severity levels, and personalized precautionary recommendations.
 
