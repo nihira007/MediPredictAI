@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediPredictAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
+
+</head>
+<body>
+
+<header>
+  <a href="#" class="logo">
+    <div class="logo-icon">
+  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+    <path d="M3 12h4l2-4 4 8 2-4h6"/>
+  </svg>
+</div>
+    <span class="logo-text">MediPredict<span>AI</span></span>
+  </a>
+  <div class="header-right">
+    <span class="header-badge">
+      <span class="dot"></span>
+      Smart Diagnosis Engine
+    </span>
+    <button class="about-btn" onclick="openAbout()">About</button>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>
+    <h1 class="hero-title">
+  MediPredict<span class="ai-highlight">AI</span>
+</h1>
+<h1>
+<p class="line2">Intelligent Symptom Analysis</p>
+  </h1>
+  <p>Analyze symptoms, predict potential conditions, and receive actionable health insights — powered by Machine Learning and AI.</p>
+</div>
+
+<div class="main">
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 3"/></svg>
+          Select Symptoms
+        </div>
+        <span id="selectedCount" style="font-size:12px;color:var(--text-muted);font-weight:600;">0 selected</span>
+      </div>
+      <div class="card-body">
+
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13.5 13.5 3 3"/></svg>
+          <input class="search-input" type="text" id="symptomSearch" placeholder="Search symptoms..." autocomplete="off"/>
+        </div>
+
+        <div class="cat-tabs" id="catTabs">
+          <span class="cat-tab active" onclick="filterCat('all',this)">All</span>
+          <span class="cat-tab" onclick="filterCat('systemic',this)">Systemic</span>
+          <span class="cat-tab" onclick="filterCat('musculoskeletal',this)">Musculoskeletal</span>
+          <span class="cat-tab" onclick="filterCat('neurological',this)">Neurological</span>
+          <span class="cat-tab" onclick="filterCat('gastrointestinal',this)">Gastrointestinal</span>
+          <span class="cat-tab" onclick="filterCat('respiratory',this)">Respiratory</span>
+          <span class="cat-tab" onclick="filterCat('skin',this)">Skin</span>
+          <span class="cat-tab" onclick="filterCat('urinary',this)">Urinary</span>
+          <span class="cat-tab" onclick="filterCat('cardiovascular',this)">Cardiovascular</span>
+        </div>
+
+        <div class="symptoms-grid" id="symptomsGrid"></div>
+
+        <div class="selected-section">
+          <div class="selected-label">
+            Selected Symptoms
+            <span id="clearSel" onclick="clearAll()" style="font-size:11px;color:var(--accent);cursor:pointer;display:none;">Clear all</span>
+          </div>
+          <div class="selected-tags empty" id="selectedTags"></div>
+        </div>
+
+        <div class="quick-examples">
+          <div class="quick-label">Try example conditions:</div>
+          <div class="quick-pills">
+            <span class="quick-pill" onclick="loadExample('cold')"><span class="dot-badge" style="background:#16a34a"></span>Common Cold</span>
+            <span class="quick-pill" onclick="loadExample('dengue')"><span class="dot-badge" style="background:#dc2626"></span>Dengue</span>
+            <span class="quick-pill" onclick="loadExample('migraine')"><span class="dot-badge" style="background:#7c3aed"></span>Migraine</span>
+          </div>
+        </div>
+
+        <button class="analyze-btn" id="analyzeBtn" onclick="analyze()" disabled>
+          Analyze Symptoms →
+        </button>
+        <button class="clear-btn" onclick="clearAll()">Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-panel" id="resultsPanel">
+    <div class="card" id="resultsCard">
+      <div class="card-header">
+        <div class="card-title">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          Analysis Results
+        </div>
+        <span id="resultsMeta" style="font-size:12px;color:var(--text-muted);font-weight:500;"></span>
+      </div>
+      <div id="resultsBody">
+        <div class="empty-state">
+          <div class="empty-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></div>
+          <h3>Ready to Analyze</h3>
+          <p>Select 2-3 symptoms from the left panel to receive an AI-powered diagnosis report.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="max-width:1160px;margin:0 auto;padding:0 24px 20px;"> 
+  <div class="model-grid">
+    <div class="model-item">
+      <span>Prediction Model</span>
+      <strong>Random Forest</strong>
+    </div>
+    <div class="model-item">
+      <span>Model Accuracy</span>
+      <strong>~99%</strong>
+    </div>
+    <div class="model-item">
+      <span>Diseases Available</span>
+      <strong>41</strong>
+    </div>
+    <div class="model-item">
+      <span>Symptom Inputs</span>
+      <strong>132</strong>
+    </div>
+    <div class="model-item">
+      <span>Medical Dataset</span>
+      <strong>Kaggle</strong>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <strong style ="background: var(--accent); background-clip: text; -webkit-text-fill-color: transparent;">MediPredictAI </strong>
+  <br> ⚠️ For educational purposes only. Always consult a licensed medical professional.
+</footer>
+
+<script>
+const ALL_SYMPTOMS = [
+  "itching","skin_rash","nodal_skin_eruptions","continuous_sneezing","shivering","chills",
+  "joint_pain","stomach_pain","acidity","ulcers_on_tongue","muscle_wasting","vomiting",
+  "burning_micturition","spotting_urination","fatigue","weight_gain","anxiety",
+  "cold_hands_and_feets","mood_swings","weight_loss","restlessness","lethargy",
+  "patches_in_throat","irregular_sugar_level","cough","high_fever","sunken_eyes",
+  "breathlessness","sweating","dehydration","indigestion","headache","yellowish_skin",
+  "dark_urine","nausea","loss_of_appetite","pain_behind_the_eyes","back_pain","constipation",
+  "abdominal_pain","diarrhoea","mild_fever","yellow_urine","yellowing_of_eyes",
+  "acute_liver_failure","fluid_overload","swelling_of_stomach","swelled_lymph_nodes",
+  "malaise","blurred_and_distorted_vision","phlegm","throat_irritation","redness_of_eyes",
+  "sinus_pressure","runny_nose","congestion","chest_pain","weakness_in_limbs","fast_heart_rate",
+  "pain_during_bowel_movements","pain_in_anal_region","bloody_stool","irritation_in_anus",
+  "neck_pain","dizziness","cramps","bruising","obesity","swollen_legs","swollen_blood_vessels",
+  "puffy_face_and_eyes","enlarged_thyroid","brittle_nails","swollen_extremities",
+  "excessive_hunger","extra_marital_contacts","drying_and_tingling_lips","slurred_speech",
+  "knee_pain","hip_joint_pain","muscle_weakness","stiff_neck","swelling_joints",
+  "movement_stiffness","spinning_movements","loss_of_balance","unsteadiness",
+  "weakness_of_one_body_side","loss_of_smell","bladder_discomfort","foul_smell_of_urine",
+  "continuous_feel_of_urine","passage_of_gases","internal_itching","toxic_look_typhos",
+  "depression","irritability","muscle_pain","altered_sensorium","red_spots_over_body",
+  "belly_pain","abnormal_menstruation","dischromic_patches","watering_from_eyes",
+  "increased_appetite","polyuria","family_history","mucoid_sputum","rusty_sputum",
+  "lack_of_concentration","visual_disturbances","receiving_blood_transfusion",
+  "receiving_unsterile_injections","coma","stomach_bleeding","distention_of_abdomen",
+  "history_of_alcohol_consumption","blood_in_sputum","prominent_veins_on_calf","palpitations",
+  "painful_walking","pus_filled_pimples","blackheads","scurring","skin_peeling",
+  "silver_like_dusting","small_dents_in_nails","inflammatory_nails","blister",
+  "red_sore_around_nose","yellow_crust_ooze"
+];
+
+const CATEGORIES = {
+  systemic: ["fatigue","fever","high_fever","mild_fever","chills","shivering","sweating","weight_loss","weight_gain","malaise","lethargy","dehydration","loss_of_appetite","nausea","vomiting","anxiety","mood_swings","restlessness","depression","irritability","altered_sensorium","toxic_look_typhos","coma"],
+  musculoskeletal: ["joint_pain","muscle_wasting","muscle_pain","muscle_weakness","knee_pain","hip_joint_pain","back_pain","neck_pain","stiff_neck","swelling_joints","movement_stiffness","cramps","painful_walking","weakness_in_limbs","weakness_of_one_body_side"],
+  neurological: ["headache","dizziness","loss_of_balance","unsteadiness","spinning_movements","blurred_and_distorted_vision","visual_disturbances","slurred_speech","lack_of_concentration","loss_of_smell","pain_behind_the_eyes"],
+  gastrointestinal: ["stomach_pain","acidity","ulcers_on_tongue","indigestion","constipation","diarrhoea","abdominal_pain","belly_pain","passage_of_gases","internal_itching","swelling_of_stomach","distention_of_abdomen","stomach_bleeding","bloody_stool","pain_during_bowel_movements","pain_in_anal_region","irritation_in_anus","acute_liver_failure","fluid_overload"],
+  respiratory: ["cough","breathlessness","phlegm","throat_irritation","sinus_pressure","runny_nose","congestion","chest_pain","blood_in_sputum","mucoid_sputum","rusty_sputum","continuous_sneezing","loss_of_smell"],
+  skin: ["itching","skin_rash","nodal_skin_eruptions","dischromic_patches","skin_peeling","silver_like_dusting","pus_filled_pimples","blackheads","scurring","blister","red_sore_around_nose","yellow_crust_ooze","bruising","red_spots_over_body","small_dents_in_nails","inflammatory_nails"],
+  urinary: ["burning_micturition","spotting_urination","bladder_discomfort","foul_smell_of_urine","continuous_feel_of_urine","dark_urine","yellow_urine","polyuria"],
+  cardiovascular: ["chest_pain","fast_heart_rate","palpitations","swollen_legs","swollen_blood_vessels","prominent_veins_on_calf","swollen_extremities","puffy_face_and_eyes"]
+};
+
+const SPECIALISTS = {
+  "Fungal infection":"Dermatologist","Allergy":"Allergist / Immunologist","GERD":"Gastroenterologist",
+  "Chronic cholestasis":"Hepatologist","Drug Reaction":"General Physician","Peptic ulcer disease":"Gastroenterologist",
+  "AIDS":"Infectious Disease Specialist","Diabetes":"Endocrinologist","Gastroenteritis":"General Physician",
+  "Bronchial Asthma":"Pulmonologist","Hypertension":"Cardiologist","Migraine":"Neurologist",
+  "Cervical spondylosis":"Orthopedic / Neurologist","Paralysis (brain hemorrhage)":"Neurologist",
+  "Jaundice":"Hepatologist","Malaria":"Infectious Disease Specialist","Chicken pox":"General Physician",
+  "Dengue":"Infectious Disease Specialist","Typhoid":"Infectious Disease Specialist",
+  "Hepatitis A":"Hepatologist","Hepatitis B":"Hepatologist","Hepatitis C":"Hepatologist",
+  "Tuberculosis":"Pulmonologist","Common Cold":"General Physician","Pneumonia":"Pulmonologist",
+  "Dimorphic hemorrhoids(piles)":"Proctologist","Heart attack":"Cardiologist","Varicose veins":"Vascular Surgeon",
+  "Hypothyroidism":"Endocrinologist","Hyperthyroidism":"Endocrinologist","Hypoglycemia":"Endocrinologist",
+  "Osteoarthritis":"Orthopedic Surgeon","Arthritis":"Rheumatologist",
+  "(Vertigo) Paroxysmal Positional Vertigo":"ENT Specialist","Acne":"Dermatologist",
+  "Urinary tract infection":"Urologist","Psoriasis":"Dermatologist","Impetigo":"Dermatologist",
+  "Alcoholic hepatitis":"Hepatologist","Hepatitis D":"Hepatologist","Hepatitis E":"Hepatologist"
+};
+
+const DISEASE_KNOWLEDGE = {
+  "Fungal infection":    { syms:["itching","skin_rash","nodal_skin_eruptions","dischromic_patches"], sev:"Low", prec:["Keep skin clean and dry","Use antifungal cream","Avoid scratching","Change socks daily"] },
+  "Allergy":             { syms:["continuous_sneezing","shivering","chills","watering_from_eyes","runny_nose"], sev:"Low", prec:["Avoid allergens","Take antihistamines","Consult an allergist","Close windows during pollen season"] },
+  "GERD":                { syms:["stomach_pain","acidity","ulcers_on_tongue","vomiting","chest_pain","indigestion"], sev:"Medium", prec:["Avoid spicy food","Avoid alcohol","Eat smaller meals","Don't lie down after eating"] },
+  "Chronic cholestasis": { syms:["itching","vomiting","yellowish_skin","nausea","loss_of_appetite","abdominal_pain","yellowing_of_eyes"], sev:"High", prec:["Cold baths","Anti-itch medicine","Consult doctor immediately","Eat healthy food"] },
+  "Drug Reaction":       { syms:["itching","skin_rash","stomach_pain","burning_micturition","spotting_urination"], sev:"Medium", prec:["Stop irritating medication","Consult nearest hospital","Stop self-medication","Follow doctor's prescription"] },
+  "Peptic ulcer disease":{ syms:["vomiting","indigestion","loss_of_appetite","abdominal_pain","passage_of_gases","internal_itching"], sev:"Medium", prec:["Avoid fatty spicy food","Consume probiotic food","Limit alcohol","Consult doctor"] },
+  "AIDS":                { syms:["muscle_wasting","patches_in_throat","high_fever","extra_marital_contacts","receiving_blood_transfusion","receiving_unsterile_injections"], sev:"Critical", prec:["Avoid open cuts","Wear PPE","Consult doctor immediately","Follow safe sex practices"] },
+  "Diabetes":            { syms:["fatigue","weight_loss","restlessness","lethargy","irregular_sugar_level","blurred_and_distorted_vision","obesity","excessive_hunger","increased_appetite","polyuria"], sev:"High", prec:["Balanced diet","Exercise regularly","Consult doctor","Follow medication schedule"] },
+  "Gastroenteritis":     { syms:["vomiting","sunken_eyes","dehydration","diarrhoea"], sev:"Medium", prec:["Stop solid food","Sip water slowly","Rest","Ease back into eating"] },
+  "Bronchial Asthma":    { syms:["fatigue","cough","high_fever","breathlessness","family_history","mucoid_sputum"], sev:"High", prec:["Wear loose clothing","Take deep breaths","Get away from trigger","Seek medical help"] },
+  "Hypertension":        { syms:["headache","chest_pain","dizziness","loss_of_balance","lack_of_concentration"], sev:"High", prec:["Meditation","Salt baths","Reduce stress","Get proper sleep"] },
+  "Migraine":            { syms:["acidity","indigestion","headache","blurred_and_distorted_vision","excessive_hunger","stiff_neck","depression","irritability","visual_disturbances"], sev:"Medium", prec:["Meditation","Reduce stress","Rest in dark room","Consult doctor"] },
+  "Cervical spondylosis":{ syms:["back_pain","weakness_in_limbs","neck_pain","dizziness","loss_of_balance"], sev:"Medium", prec:["Heating pad","Exercise","OTC pain relief","Consult doctor"] },
+  "Paralysis (brain hemorrhage)":{ syms:["vomiting","headache","weakness_of_one_body_side","altered_sensorium"], sev:"Critical", prec:["Call ambulance","Keep calm","Eat healthy","Consult nearest hospital"] },
+  "Jaundice":            { syms:["itching","vomiting","fatigue","weight_loss","high_fever","yellowish_skin","dark_urine","abdominal_pain"], sev:"High", prec:["Drink lots of water","Consume milk thistle","Eat fruits and fiber","Medication"] },
+  "Malaria":             { syms:["chills","vomiting","high_fever","sweating","headache","nausea","diarrhoea","muscle_pain"], sev:"High", prec:["Consult hospital","Avoid oily food","Avoid non-veg food","Keep mosquitoes out"] },
+  "Chicken pox":         { syms:["itching","skin_rash","fatigue","lethargy","high_fever","headache","loss_of_appetite","mild_fever","swelled_lymph_nodes","malaise","red_spots_over_body","blister"], sev:"Medium", prec:["Neem baths","Avoid public places","Take vaccine","Keep cool"] },
+  "Dengue":              { syms:["skin_rash","chills","joint_pain","vomiting","fatigue","high_fever","headache","nausea","loss_of_appetite","pain_behind_the_eyes","back_pain","malaise","muscle_pain","red_spots_over_body"], sev:"High", prec:["Papaya leaf juice","Avoid spicy food","Keep mosquitoes away","Stay hydrated"] },
+  "Typhoid":             { syms:["chills","vomiting","fatigue","high_fever","headache","nausea","constipation","abdominal_pain","diarrhoea","toxic_look_typhos","belly_pain"], sev:"High", prec:["Eat high-calorie vegetables","Antibiotic therapy","Consult doctor","Medication"] },
+  "Hepatitis A":         { syms:["joint_pain","vomiting","yellowish_skin","dark_urine","nausea","loss_of_appetite","abdominal_pain","diarrhoea","mild_fever","yellowing_of_eyes","muscle_pain"], sev:"High", prec:["Consult hospital","Wash hands thoroughly","Avoid fatty food","Medication"] },
+  "Hepatitis B":         { syms:["itching","fatigue","lethargy","yellowish_skin","dark_urine","loss_of_appetite","abdominal_pain","yellow_urine","yellowing_of_eyes","malaise","receiving_blood_transfusion","receiving_unsterile_injections"], sev:"Critical", prec:["Consult hospital","Vaccination","Eat healthy","Medication"] },
+  "Hepatitis C":         { syms:["fatigue","yellowish_skin","nausea","loss_of_appetite","yellowing_of_eyes","receiving_blood_transfusion"], sev:"Critical", prec:["Consult hospital","Vaccination","Eat healthy","Medication"] },
+  "Tuberculosis":        { syms:["chills","vomiting","fatigue","weight_loss","cough","high_fever","breathlessness","sweating","loss_of_appetite","mild_fever","swelled_lymph_nodes","malaise","phlegm","chest_pain","blood_in_sputum"], sev:"Critical", prec:["Cover mouth","Consult doctor","Medication","Rest"] },
+  "Common Cold":         { syms:["continuous_sneezing","chills","fatigue","cough","headache","swelled_lymph_nodes","malaise","phlegm","throat_irritation","redness_of_eyes","sinus_pressure","runny_nose","congestion","chest_pain","loss_of_smell","muscle_pain"], sev:"Low", prec:["Vitamin C drinks","Steam inhalation","Avoid cold food","Keep fever in check"] },
+  "Pneumonia":           { syms:["chills","fatigue","cough","high_fever","breathlessness","sweating","malaise","phlegm","chest_pain","fast_heart_rate","rusty_sputum"], sev:"High", prec:["Consult doctor","Medication","Rest","Follow up"] },
+  "Dimorphic hemorrhoids(piles)":{ syms:["constipation","pain_during_bowel_movements","pain_in_anal_region","bloody_stool","irritation_in_anus"], sev:"Medium", prec:["Avoid spicy food","Witch hazel","Warm Epsom salt bath","Aloe vera juice"] },
+  "Heart attack":        { syms:["vomiting","breathlessness","sweating","chest_pain","weakness_in_limbs","fast_heart_rate"], sev:"Critical", prec:["Call ambulance immediately","Chew aspirin","Keep calm","Inform relatives"] },
+  "Varicose veins":      { syms:["fatigue","cramps","bruising","obesity","swollen_legs","swollen_blood_vessels","prominent_veins_on_calf"], sev:"Medium", prec:["Elevate legs","Use ointments","Compression stockings","Don't stand too long"] },
+  "Hypothyroidism":      { syms:["fatigue","weight_gain","cold_hands_and_feets","mood_swings","lethargy","dizziness","puffy_face_and_eyes","enlarged_thyroid","brittle_nails","depression","irritability","abnormal_menstruation"], sev:"Medium", prec:["Reduce stress","Exercise","Eat healthy","Get proper sleep"] },
+  "Hyperthyroidism":     { syms:["fatigue","mood_swings","weight_loss","restlessness","sweating","diarrhoea","fast_heart_rate","excessive_hunger","muscle_weakness","irritability"], sev:"High", prec:["Eat healthy","Massage","Lemon balm tea","Consult doctor"] },
+  "Hypoglycemia":        { syms:["fatigue","anxiety","cold_hands_and_feets","sweating","headache","nausea","blurred_and_distorted_vision","palpitations","drying_and_tingling_lips","slurred_speech","irritability","excessive_hunger"], sev:"High", prec:["Eat sugar immediately","Lie down","Consult doctor","Carry glucose tablets"] },
+  "Osteoarthritis":      { syms:["joint_pain","neck_pain","knee_pain","hip_joint_pain","swelling_joints","painful_walking"], sev:"Medium", prec:["Acetaminophen","Consult orthopedic","Follow medical advice","Warm baths"] },
+  "Arthritis":           { syms:["muscle_weakness","stiff_neck","swelling_joints","movement_stiffness","painful_walking"], sev:"Medium", prec:["Exercise","Hot/cold therapy","Acupuncture","Massage"] },
+  "(Vertigo) Paroxysmal Positional Vertigo":{ syms:["vomiting","headache","nausea","spinning_movements","loss_of_balance","unsteadiness"], sev:"Low", prec:["Lie down","Avoid sudden movements","Avoid abrupt head movement","Relax"] },
+  "Acne":                { syms:["skin_rash","pus_filled_pimples","blackheads","scurring"], sev:"Low", prec:["Cleanse twice daily","Avoid fatty food","Drink water","Minimal skin products"] },
+  "Urinary tract infection":{ syms:["burning_micturition","bladder_discomfort","foul_smell_of_urine","continuous_feel_of_urine"], sev:"Medium", prec:["Drink lots of water","Vitamin C intake","Cranberry juice","Take probiotics"] },
+  "Psoriasis":           { syms:["skin_rash","joint_pain","skin_peeling","silver_like_dusting","small_dents_in_nails","inflammatory_nails"], sev:"Medium", prec:["Warm soapy water","Stop scratching","Consult doctor","Moisturize regularly"] },
+  "Impetigo":            { syms:["skin_rash","high_fever","blister","red_sore_around_nose","yellow_crust_ooze"], sev:"Medium", prec:["Warm water soak","Antibiotics","Remove scabs with wet cloth","Consult doctor"] },
+  "Alcoholic hepatitis": { syms:["vomiting","yellowish_skin","abdominal_pain","swelling_of_stomach","distention_of_abdomen","history_of_alcohol_consumption"], sev:"High", prec:["Stop alcohol","Consult doctor","Medication","Follow up"] },
+  "Hepatitis D":         { syms:["joint_pain","vomiting","fatigue","yellowish_skin","dark_urine","nausea","loss_of_appetite","abdominal_pain","yellowing_of_eyes"], sev:"Critical", prec:["Consult doctor","Medication","Eat healthy","Follow up"] },
+  "Hepatitis E":         { syms:["joint_pain","vomiting","fatigue","high_fever","yellowish_skin","dark_urine","nausea","loss_of_appetite","abdominal_pain","acute_liver_failure"], sev:"Critical", prec:["Stop alcohol","Rest","Consult doctor","Medication"] },
+};
+
+const EXAMPLES = {
+  cold:     ["continuous_sneezing","runny_nose","cough","headache","fatigue","throat_irritation"],
+  diabetes: ["fatigue","weight_loss","polyuria","excessive_hunger","blurred_and_distorted_vision","irregular_sugar_level"],
+  dengue:   ["high_fever","joint_pain","headache","nausea","skin_rash","pain_behind_the_eyes","muscle_pain"],
+  migraine: ["headache","blurred_and_distorted_vision","nausea","stiff_neck","visual_disturbances","irritability"]
+};
+
+let selected = new Set();
+let activeCat = 'all';
+
+// Filter symptoms based on category and search input
+function filterCat(cat, el) {
+  activeCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderSymptoms(document.getElementById('symptomSearch').value);
+}
+
+function getFilteredSymptoms(search) {
+  const fl = search.toLowerCase().replace(/\s+/g,'_');
+  let syms = ALL_SYMPTOMS;
+  if (activeCat !== 'all') {
+    const catSyms = CATEGORIES[activeCat] || [];
+    syms = syms.filter(s => catSyms.some(cs => s.includes(cs) || cs.includes(s)));
+  }
+  if (fl) syms = syms.filter(s => s.includes(fl));
+  return syms;
+}
+
+// Render symptom grid dynamically
+function renderSymptoms(filter = '') {
+  const grid = document.getElementById('symptomsGrid');
+  const syms = getFilteredSymptoms(filter);
+  grid.innerHTML = syms.map(s =>
+    `<div class="sym-item ${selected.has(s)?'selected':''}" onclick="toggleSymptom('${s}')">
+      <span class="sym-check"></span>
+      <span>${s.replace(/_/g,' ')}</span>
+    </div>`
+  ).join('');
+}
+
+function toggleSymptom(sym) {
+  selected.has(sym) ? selected.delete(sym) : selected.add(sym);
+  updateUI();
+  renderSymptoms(document.getElementById('symptomSearch').value);
+}
+
+function updateUI() {
+  const tagsEl = document.getElementById('selectedTags');
+  if (selected.size === 0) {
+    tagsEl.innerHTML = ''; tagsEl.classList.add('empty');
+    document.getElementById('clearSel').style.display = 'none';
+  } else {
+    tagsEl.classList.remove('empty');
+    tagsEl.innerHTML = [...selected].map(s =>
+      `<span class="tag">${s.replace(/_/g,' ')}<span class="tag-remove" onclick="toggleSymptom('${s}')">×</span></span>`
+    ).join('');
+    document.getElementById('clearSel').style.display = '';
+  }
+  document.getElementById('selectedCount').textContent = `${selected.size} selected`;
+  document.getElementById('analyzeBtn').disabled = selected.size === 0;
+}
+
+function clearAll() {
+  selected.clear();
+  document.getElementById('symptomSearch').value = '';
+  renderSymptoms(); updateUI(); showEmpty();
+}
+
+function loadExample(key) {
+  selected.clear();
+  EXAMPLES[key].forEach(s => selected.add(s));
+  activeCat = 'all';
+  document.querySelectorAll('.cat-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  renderSymptoms(); updateUI();
+}
+
+// Render symptom grid dynamically
+async function analyze() {
+  const btn = document.getElementById('analyzeBtn');
+
+  btn.innerHTML = `<span class="spinner"></span> Analyzing…`;
+  btn.disabled = true;
+
+  const sympList = [...selected];
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/predict", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        symptoms: sympList
+      })
+    });
+
+    const data = await response.json();
+
+    btn.innerHTML = `Analyze Symptoms →`;
+    btn.disabled = false;
+
+    renderResultsAPI(data, sympList);
+
+  } catch (error) {
+    btn.innerHTML = `Analyze Symptoms →`;
+    btn.disabled = false;
+    showError("Backend not running");
+  }
+}
+
+function showEmpty() {
+  document.getElementById('resultsBody').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></div>
+      <h3>Ready to Analyze</h3>
+      <p>Select 2–3 symptoms from the panel to receive an AI-powered diagnosis report.</p>
+    </div>`;
+  document.getElementById('resultsMeta').textContent = '';
+}
+
+function showError(msg) {
+  document.getElementById('resultsBody').innerHTML =
+    `<div class="error-box"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="8"/><path d="M10 6v4M10 14h.01"/></svg>${msg}</div>`;
+}
+
+// Display predictions returned from API
+function renderResultsAPI(data, sympList) {
+  const formatted = data.top_predictions.map(p => ({
+    disease: p.disease,
+    confidence: Math.round(p.probability * 100),
+    severity: getSeverityLevel(data.severity_score),
+    precautions: p.precautions,
+    description: p.description,
+    matched_symptoms: sympList
+  }));
+
+  window.latestReasoning = data.reasoning;
+  
+  renderResults(formatted, sympList);
+}
+
+function getSeverityLevel(score) {
+  if (score < 5) return "Low";
+  if (score < 10) return "Medium";
+  if (score < 15) return "High";
+  return "Critical";
+}
+
+// Render prediction results with confidence bars and details
+function renderResults(predictions, sympList) {
+  document.getElementById('resultsMeta').textContent = `${predictions.length} conditions · ${sympList.length} symptoms`;
+
+  const chartHtml = `
+    <div class="chart-card">
+      <div class="chart-title">Confidence Distribution</div>
+      <div class="chart-bars">
+        ${predictions.map((p,i) => `
+          <div class="chart-row">
+            <span class="chart-label" title="${p.disease}">${p.disease}</span>
+            <div class="chart-bar-track">
+              <div class="chart-bar-fill" style="width:${p.confidence}%;background:${i===0?'linear-gradient(90deg,#1a56db,#7c3aed)':'linear-gradient(90deg,#3b82f6,#1a56db)'}"></div>
+            </div>
+            <span class="chart-val">${p.confidence}%</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+
+  const cardsHtml = `
+    <div class="predictions-list">
+      ${predictions.map((p,i) => `
+        <div class="pred-card ${i===0?'top':''}" id="pred-${i}">
+          <div class="pred-sev-bar ${p.severity}"></div>
+          <div class="pred-header" onclick="toggleExpand(${i})">
+            <div class="pred-left">
+              <span class="pred-rank">${i+1}</span>
+              <span class="pred-name" title="${p.disease}">${p.disease}</span>
+            </div>
+            <div class="pred-badges">
+              <span class="sev-badge sev-${p.severity}">${p.severity}</span>
+              
+              <svg class="expand-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8l4 4 4-4"/></svg>
+            </div>
+          </div>
+          <div class="conf-bar-wrap">
+            <div class="conf-bar-track"><div class="conf-bar-fill" style="width:${p.confidence}%"></div></div>
+          </div>
+          <div class="pred-details">
+            ${p.matched_symptoms.length ? `
+            <div class="detail-section">
+              <h4>Symptom Match (${p.matched_symptoms.length})</h4>
+              <div class="matched-symptoms">
+                ${p.matched_symptoms.map(s=>`<span class="matched-sym">${s.replace(/_/g,' ')}</span>`).join('')}
+              </div>
+            </div>` : ''}
+            <div class="detail-section about">
+          <h4>About the Condition</h4>
+          <p class="disease-desc">${p.description}</p>
+        </div>
+
+        <div class="detail-section actions">
+          <h4> Recommended Actions</h4>
+          <ul class="actions-list">
+            ${p.precautions.map(pr=>`<li>${pr}</li>`).join('')}
+          </ul>
+        </div>
+            
+            <div class="detail-section">
+              
+              <button class="ai-pill-btn" onclick="loadDiseaseInfo('${p.disease}')">Ask AI About This 💬</button>
+              <div id="info-${p.disease}"></div>
+            </div>
+            <div class="specialist-row">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
+              See: ${SPECIALISTS[p.disease] || 'General Physician'}
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    `;
+
+  document.getElementById('resultsCard').outerHTML = `
+    <div id="resultsCard" class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          Analysis Results
+        </div>
+        <span id="resultsMeta" style="font-size:12px;color:var(--text-muted);font-weight:500;">${predictions.length} conditions · ${sympList.length} symptoms</span>
+      </div>
+      <div id="resultsBody" style="padding:14px 16px;display:flex;flex-direction:column;gap:12px;">
+        ${chartHtml}
+        ${cardsHtml}
+      </div>
+    </div>`;
+
+  setTimeout(() => toggleExpand(0), 100);
+}
+
+function toggleExpand(i) {
+  const card = document.getElementById(`pred-${i}`);
+  if (card) card.classList.toggle('expanded');
+}
+
+document.getElementById('symptomSearch').addEventListener('input', e => renderSymptoms(e.target.value));
+renderSymptoms();
+
+// AI Assistant Logic
+async function loadDiseaseInfo(disease) {
+
+  const sidebar = document.getElementById("aiSidebar");
+  sidebar.classList.add("open");
+
+  const infoBox = document.getElementById("aiInfo");
+  const chatBox = document.getElementById("chatBox");
+
+  infoBox.innerHTML = "";
+  chatBox.innerHTML = `
+  <div class="chat-msg ai-msg">
+    Ask me anything about this condition
+  </div>
+
+  <div class="example-questions">
+  <button onclick="askQ('What could have caused this?')">What caused this?</button>
+  
+  <button onclick="askQ('How serious is this condition?')">Is this serious?</button>
+  
+  <button onclick="askQ('What should I do now?')">What should I do?</button>
+  
+  <button onclick="askQ('Do I need to see a doctor?')">Do I need a doctor?</button>
+  
+  <button onclick="askQ('What medicines can help?')">What medicines can I take?</button>
+  
+  <button onclick="askQ('How long will this last?')">How long will it last?</button>
+</div>
+`;
+
+  infoBox.innerHTML = data.info.replace(/\n/g, "<br>");
+  chatBox.innerHTML += `
+    <div class="chat-msg ai-msg">
+      Ask me anything about ${disease}
+    </div>
+  `;
+}
+
+function openAI(){
+  document.getElementById("aiInfo").innerHTML = "";
+}
+
+function askQ(q) {
+  const disease = window.currentDisease || "";
+  const input = document.getElementById("chatInput");
+
+  input.value = q + (disease ? " for " + disease : "");
+  sendChat();
+}
+
+function formatAI(text){
+  return text
+    .replace(/\n/g, "<br>")
+    .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+    .replace(/\*/g, "•");
+}
+
+// Sending chat messages to AI 
+async function sendChat(){
+  const input = document.getElementById("chatInput");
+  const msg = input.value;
+  if(!msg) return;
+
+  const chatBox = document.getElementById("chatBox");
+
+  chatBox.innerHTML += `<div class="chat-msg user-msg">${msg}</div>`;
+  input.value = "";
+
+  const res = await fetch("http://127.0.0.1:8000/chat", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({query: msg + " (patient symptoms: " + [...selected].join(", ") + ")"})
+  });
+
+  const data = await res.json();
+
+  chatBox.innerHTML += `<div class="chat-msg ai-msg">${formatAI(data.reply)}</div>`;
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function closeSidebar(){
+  document.getElementById("aiSidebar").classList.remove("open");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("chatInput");
+
+  input.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendChat();
+    }
+  });
+});
+
+function openAbout() {
+  document.getElementById("aboutModal").style.display = "flex";
+}
+
+function closeAbout() {
+  document.getElementById("aboutModal").style.display = "none";
+}
+
+</script>
+
+<div id="aiSidebar">
+  <div id="aiHeader">
+    <div class="ai-title">
+    💬 AI Health Assistant
+    </div>
+    <span class="ai-close" onclick="closeSidebar()">✖</span>
+  </div>
+
+  <div id="aiContent">
+    <div id="aiInfo"></div>
+    <div id="chatBox"></div>
+  </div>
+
+  <div id="chatInputArea">
+    <input id="chatInput" placeholder="Ask about this condition..." />
+    <button onclick="sendChat()" class="send-btn">➤</button>
+  </div>
+</div>
+
+<div id="aboutModal" class="modal">
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <h2>About</h2>
+      <span class="close-btn" onclick="closeAbout()">✖</span>
+    </div>
+
+    <div class="modal-body">
+      <p>
+        <strong style ="background: var(--accent); background-clip: text; -webkit-text-fill-color: transparent;" >
+          MediPredictAI</strong> 
+          is an AI-powered disease prediction and medical assistance platform designed to analyze symptoms and provide possible conditions along with medical suggestions.
+      </p>
+      <br>
+      <p>
+        Using a trained machine learning model, the system evaluates user-selected symptoms to predict possible diseases along with confidence scores, severity levels, and recommended precautions—helping users make informed health decisions.
+      </p>
+      <br>
+      <p>
+         <b>Key Features:</b>
+      <ul>
+        <li>Multi-disease prediction with probability ranking using Machine Learning.</li>
+        <li>Severity analysis with personalized precautions & recommendations.</li>
+        <li>AI-powered assistant for real-time health queries.</li>
+      </ul>
+      </p>
+        <br>
+      <p>
+         <b>How It Works:</b><br>
+         Select symptoms → ML model analyzes patterns → Predictions are generated → Results are enhanced with medical insights and AI guidance.
+      </p>
+        <br>
+      <p class="tech">
+         Built with: Python, FastAPI, Machine Learning-Random Forest (Tuned), AI Assistant (Groq)
+      </p>
+      <br>
+      <p class="tech">
+        Built & Designed by Nihira Hassan
+      </p>
+
+      <p class="disclaimer">
+        ⚠️ This tool is for educational purposes only and does not replace professional medical advice. Always consult a healthcare provider for medical concerns.
+      </p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
