@@ -1,7 +1,24 @@
-# MediPredict AI 
+# MediPredictAI 
 
-MediPredict AI is an AI-powered and medical assistance platform that analyzes symptoms and provides possible conditions along with severity levels and medical suggestions.
+MediPredictAI is an AI-powered and medical assistance platform that analyzes symptoms and provides possible conditions along with severity levels and medical suggestions.
 
+The system uses a trained machine learning model to evaluate symptom patterns and predict possible diseases along with probability scores, severity levels, and personalized precautionary recommendations.
+
+It also includes an AI-powered assistant that helps users understand medical conditions, offering quick explanations, guidance, and actionable suggestions in real time.
+
+By combining machine learning with intuitive design, MediPredict AI enables users to make more informed health decisions in a simple and accessible way.
+
+---
+
+## Features
+
+* Symptom-based multi-disease prediction using Machine Learning.
+* Probability-based ranking of conditions.
+* Severity analysis (Low → Critical).
+* Precautions and disease descriptions.
+* AI-powered assistant for real-time health queries.
+* Clean and interactive UI.
+  
 ---
 
 ##  Preview
@@ -16,14 +33,12 @@ MediPredict AI is an AI-powered and medical assistance platform that analyzes sy
 
 ---
 
-## Features
+##  How It Works
 
-* Symptom-based multi-disease prediction using Machine Learning.
-* Probability-based ranking of conditions.
-* Severity analysis (Low → Critical).
-* Precautions and disease descriptions.
-* AI-powered assistant for real-time health queries.
-* Clean and interactive UI.
+1. User selects symptoms
+2. Symptoms are converted into a feature vector
+3. ML model predicts possible diseases
+4. Returns results with probabilities, severity, and precautions
 
 ---
 
@@ -33,16 +48,7 @@ MediPredict AI is an AI-powered and medical assistance platform that analyzes sy
 * Machine Learning: Random Forest (Tuned with GridSearchCV)
 * Frontend: HTML, CSS, JavaScript
 * AI Integration: Groq API
-
----
-
-##  How It Works
-
-1. User selects symptoms
-2. Symptoms are converted into a feature vector
-3. ML model predicts possible diseases
-4. Returns results with probabilities, severity, and precautions
-
+  
 ---
 
 ##  Model Details
