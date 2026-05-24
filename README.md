@@ -46,7 +46,7 @@ By combining machine learning with intuitive design, MediPredict AI enables user
 ## Tech Stack
 
 * Backend: Python, FastAPI
-* Machine Learning: Random Forest (Tuned with GridSearchCV)
+* Machine Learning: Random Forest
 * Frontend: HTML, CSS, JavaScript
 * AI Integration: Groq API
   
